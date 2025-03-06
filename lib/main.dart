@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:memorization_and_clock/quiz_home.dart';
 
 void main() {
   runApp(const MyApp());
@@ -90,6 +91,16 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
         backgroundColor: Colors.purple,
+        actions: [
+          IconButton(onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => QuizHome(title: widget.title),
+              ),
+            );
+          }, icon: const Icon(Icons.input_rounded))
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
