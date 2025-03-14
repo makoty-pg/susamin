@@ -1,4 +1,3 @@
-// TODO Implement this library.
 import 'package:flutter/material.dart';
 import 'clock_home.dart';
 import 'quiz_home.dart';
