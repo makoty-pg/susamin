@@ -27,7 +27,7 @@ class MyStatefulWidget extends StatefulWidget {
 
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   static const _screens = [
-    QuizHome(),
+    QuizHomePage(),
     ClockHomePage(title: 'メモクロ'),
   ];
 
