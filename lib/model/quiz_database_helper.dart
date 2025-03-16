@@ -31,7 +31,7 @@ class QuizDatabaseHelper {
         await db.execute('''
           CREATE TABLE quiz_list (
             id INTEGER PRIMARY KEY,
-            title TEXT,
+            title TEXT
           )
         ''');
         await db .execute('''
@@ -44,7 +44,7 @@ class QuizDatabaseHelper {
             option3 TEXT,
             option4 TEXT,
             answer TEXT,
-            FOREIGN KEY (quizListId) REFERENCES quiz_list (id)
+            FOREIGN KEY (quizListId) REFERENCES quiz_list (id) ON DELETE CASCADE
           )
         ''');
       },
@@ -64,8 +64,8 @@ class QuizDatabaseHelper {
   Future<void> deleteData(int id) async {
     final Database? db = await database;
     await db!.transaction((txn) async {
-      await db.delete('quiz', where: 'id = ?', whereArgs: [id]);
-      await db.delete('quiz_list', where: 'id = ?', whereArgs: [id]);
+      await txn.delete('quiz', where: 'id = ?', whereArgs: [id]);
+      await txn.delete('quiz_list', where: 'id = ?', whereArgs: [id]);
     });
   }
 

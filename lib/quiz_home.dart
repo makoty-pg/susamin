@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'add_quiz_screen.dart';
 import 'model/quiz_database_helper.dart';
 import 'model/quiz_manager.dart';
 
@@ -28,7 +29,7 @@ class _QuizHomePageState extends State<QuizHomePage> {
       ),
       body: _buildQuizList(),
       floatingActionButton: FloatingActionButton(
-        onPressed: null,
+        onPressed: _addQuizList,
         child: const Icon(Icons.add),
       ),
     );
@@ -49,6 +50,14 @@ class _QuizHomePageState extends State<QuizHomePage> {
         return Card(
           child: ListTile(
             title: Text(ele.title),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AddQuizScreen()
+                )
+              );
+            },
             trailing: IconButton(
               icon: const Icon(Icons.delete),
               onPressed: () {
@@ -71,24 +80,64 @@ class _QuizHomePageState extends State<QuizHomePage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('問題集削除'),
-          content: Text('削除しますか'),
+          title: const Text('問題集削除'),
+          content: const Text('削除しますか'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('いいえ'),
+              child: const Text('いいえ'),
             ),
             TextButton(
               onPressed: () {
                 _deleteQuizList(ele);
                 Navigator.of(context).pop();
               },
-              child: Text('はい'),
+              child: const Text('はい'),
             ),
           ],
         );
       }
     );
+  }
+
+  void _addQuizList() {
+    TextEditingController controller = TextEditingController();
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('問題集の追加'),
+            content: TextField(
+              controller: controller,
+              autofocus: true,
+              decoration: const InputDecoration(
+                hintText: 'タイトルを入力してください',
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('キャンセル'),
+              ),
+              TextButton(
+                onPressed: () {
+                  if (controller.text.isNotEmpty){
+                    QuizList newList = QuizList(title: controller.text);
+                    _insertQuizList(newList);
+                    Navigator.of(context).pop();
+                  }
+                },
+                child: const Text('追加'),
+              ),
+            ],
+          );
+        }
+    );
+  }
+
+  _insertQuizList(QuizList list) async {
+    await dbHelper.insertList(list.toMap());
+    _fetchQuizList();
   }
 }
 
