@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:memorization_and_clock/model/quiz.dart';
 
 class QuizScreen extends StatefulWidget {
   const QuizScreen({super.key});
