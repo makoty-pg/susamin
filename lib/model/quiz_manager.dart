@@ -17,7 +17,7 @@ class QuizList {
   factory QuizList.fromMap(Map<String, dynamic> map) {
     return QuizList(
       id: map['id'],
-      title: map['title'],
+      title: map['title']
     );
   }
 }
@@ -30,7 +30,7 @@ class QuizData {
   final String option2;
   final String option3;
   final String option4;
-  final String answer;
+  final int answer;
 
   QuizData({
     this.id,
@@ -65,7 +65,7 @@ class QuizData {
       option2: map['option2'],
       option3: map['option3'],
       option4: map['option4'],
-      answer: map['answer'],
+      answer: int.parse(map['answer']),
     );
   }
 }

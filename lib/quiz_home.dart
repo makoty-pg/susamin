@@ -54,7 +54,7 @@ class _QuizHomePageState extends State<QuizHomePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const AddQuizScreen()
+                  builder: (context) => AddQuizScreen(ele: ele),
                 )
               );
             },
