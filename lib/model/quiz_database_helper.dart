@@ -1,3 +1,4 @@
+import 'package:memorization_and_clock/model/quiz.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
