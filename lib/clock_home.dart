@@ -93,7 +93,7 @@ class _ClockHomePageState extends State<ClockHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text("Flutterスクロールサンプル"),
+            const Text("アラーム一覧"),
             ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
