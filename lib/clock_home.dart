@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:memorization_and_clock/alarm_setting.dart';
 
 class CornerWidget extends StatelessWidget {
   final VoidCallback onEdit;
@@ -53,6 +54,7 @@ class ClockHome extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const ClockHomePage(title: 'メモクロ'),
+
     );
   }
 }
@@ -79,7 +81,7 @@ class _ClockHomePageState extends State<ClockHomePage> {
       items.remove(item);
     });
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -122,6 +124,15 @@ class _ClockHomePageState extends State<ClockHomePage> {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AlarmSetting()),
+          );
+        },
       ),
     );
   }
