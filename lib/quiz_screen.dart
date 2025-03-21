@@ -3,9 +3,9 @@ import 'package:memorization_and_clock/result_screen.dart';
 
 class QuizScreen extends StatefulWidget {
   QuizScreen({super.key, required this.quizMap, required this.isTest, required this.alarmId});
-  List<Map> quizMap;
-  bool isTest;
-  int alarmId;
+  final List<Map> quizMap;
+  final bool isTest;
+  final int alarmId;
 
   @override
   State<QuizScreen> createState() => _QuizScreenState();

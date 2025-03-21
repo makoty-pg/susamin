@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:memorization_and_clock/model/load_quiz_data.dart';
 import 'package:memorization_and_clock/model/start_quiz_service.dart';
 import 'package:memorization_and_clock/quiz_format_screen.dart';
 import 'package:memorization_and_clock/quiz_screen.dart';

@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:memorization_and_clock/model/load_quiz_data.dart';
 import 'package:memorization_and_clock/model/quiz_manager.dart';
 

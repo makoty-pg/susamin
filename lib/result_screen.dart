@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 class ResultScreen extends StatefulWidget {
   ResultScreen({super.key, required this.result, required this.length, required this.isTest, required this.alarmId});
-  int result;
-  int length;
-  bool isTest;
-  int alarmId;
+  final int result;
+  final int length;
+  final bool isTest;
+  final int alarmId;
 
   @override
   State<ResultScreen> createState() => _ResultScreenState();
