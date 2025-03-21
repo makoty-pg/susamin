@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:memorization_and_clock/model/load_quiz_data.dart';
+import 'package:memorization_and_clock/model/start_quiz_service.dart';
 import 'package:memorization_and_clock/quiz_format_screen.dart';
 import 'package:memorization_and_clock/quiz_screen.dart';
 import 'model/quiz_manager.dart';
@@ -16,6 +18,7 @@ class AddQuizScreen extends StatefulWidget {
 class _AddQuizScreenState extends State<AddQuizScreen> {
   List<QuizData> _quizData = [];
   QuizDatabaseHelper dbHelper = QuizDatabaseHelper();
+  late List<Map> quizMap;
 
   @override
   void initState() {
@@ -41,11 +44,12 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
               ),
               onPressed: _quizData.isEmpty
                 ? null
-                : () {
+                : () async {
+                quizMap = await getQuizMap(widget.ele.id!);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => QuizScreen(),
+                      builder: (context) => QuizScreen(quizMap: quizMap, isTest: false, alarmId: -1,),
                   ),
                 );
               },
