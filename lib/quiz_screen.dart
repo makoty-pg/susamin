@@ -45,7 +45,7 @@ class _QuizScreenState extends State<QuizScreen> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => ResultScreen(result: result, length: quizMap.length, isTest: isTest, alarmId: alarmId,)
+            builder: (context) => ResultScreen(result: result, quizMap: quizMap, isTest: isTest, alarmId: alarmId,)
         )
     );
   }
