@@ -91,8 +91,14 @@ class AlarmDatabase {
     )).toList();
   }
 
-  Future<void> syncAlarmsWithSystem() async {//データベースとalarmを同期させる
+  Future<void> syncAlarmsWithSystem() async {
+    // すべてのアラームを削除
+    await Alarm.stopAll();
+
+    // データベースからアラームを取得
     final alarms = await getAllAlarms();
+
+    // 取得したアラームを再登録
     for (var alarm in alarms) {
       await Alarm.set(
         alarmSettings: AlarmSettings(
@@ -109,4 +115,5 @@ class AlarmDatabase {
       );
     }
   }
+
 }

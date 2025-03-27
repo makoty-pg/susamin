@@ -22,6 +22,7 @@ class _ClockHomePageState extends State<ClockHomePage> {
   }
 
   void _fetchAlarms() {
+    AlarmDatabase.instance.syncAlarmsWithSystem();
     setState(() {
       _alarms = AlarmDatabase.instance.getAllAlarms();
     });
@@ -35,10 +36,10 @@ class _ClockHomePageState extends State<ClockHomePage> {
   void _addTestAlarm() async {
     final now = DateTime.now().add(const Duration(minutes: 1));
     final alarm = AlarmSettings(
-      id: now.millisecondsSinceEpoch % 100000, // 一意のIDを生成
+      id: 1, // 一意のIDを生成
       dateTime: now,
       assetAudioPath: 'assets/alarm.mp3',
-      loopAudio: true,
+      loopAudio: false,
       vibrate: true,
       warningNotificationOnKill: false,
       androidFullScreenIntent: true,
