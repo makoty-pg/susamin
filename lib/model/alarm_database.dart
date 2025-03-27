@@ -38,13 +38,15 @@ class AlarmDatabase {
       warningNotificationOnKill INTEGER NOT NULL DEFAULT 0,
       androidFullScreenIntent INTEGER NOT NULL DEFAULT 1,
       volume REAL NOT NULL DEFAULT 0.8,
-      volumeEnforced INTEGER NOT NULL DEFAULT 1
+      volumeEnforced INTEGER NOT NULL DEFAULT 1,
+      title TEXT NOT NULL DEFAULT '',
+      body TEXT NOT NULL DEFAULT '',
     )
   ''');
   }
 
 
-  Future<int> insertAlarm(AlarmSettings alarm) async {//データベースにalarmを登録
+  Future<int> insertAlarm(AlarmSettings alarm) async {
     final db = await instance.database;
     return await db.insert('alarms', {
       'hour': alarm.dateTime.hour,
@@ -58,6 +60,8 @@ class AlarmDatabase {
       'androidFullScreenIntent': alarm.androidFullScreenIntent ? 1 : 0,
       'volume': alarm.volumeSettings.volume,
       'volumeEnforced': alarm.volumeSettings.volumeEnforced ? 1 : 0,
+      'title': alarm.notificationSettings.title,
+      'body': alarm.notificationSettings.body,
     });
   }
 
@@ -66,7 +70,7 @@ class AlarmDatabase {
     return await db.delete('alarms', where: 'id = ?', whereArgs: [id]);
   }
 
-  Future<List<AlarmSettings>> getAllAlarms() async {//データベースに登録されているalarmを全て取得
+  Future<List<AlarmSettings>> getAllAlarms() async {
     final db = await instance.database;
     final List<Map<String, dynamic>> result = await db.query('alarms');
 
@@ -82,11 +86,9 @@ class AlarmDatabase {
         volume: e['volume'],
         volumeEnforced: e['volumeEnforced'] == 1,
       ),
-      notificationSettings: const NotificationSettings(
-        title: 'This is the title',
-        body: 'This is the body',
-        stopButton: 'Stop the alarm',
-        icon: 'notification_icon',
+      notificationSettings: NotificationSettings(
+        title: e['title'],
+        body: e['body'],
       ),
     )).toList();
   }
