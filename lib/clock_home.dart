@@ -1,56 +1,7 @@
+import 'package:alarm/model/volume_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:alarm/alarm.dart';
-import 'package:memorization_and_clock/alarm_setting.dart';
-import 'model/alarm_manager.dart';
-
-class CornerWidget extends StatelessWidget {
-  final VoidCallback onEdit;
-  final VoidCallback onDelete;
-  final String time;
-  final String date;
-
-  const CornerWidget({
-    Key? key,
-    required this.onEdit,
-    required this.onDelete,
-    required this.time,
-    required this.date,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Positioned(
-          top: 10,
-          left: 10,
-          child: Text(time, style: const TextStyle(fontSize: 18)),
-        ),
-        Positioned(
-          bottom: 10,
-          left: 10,
-          child: Text(date, style: const TextStyle(fontSize: 18)),
-        ),
-        Positioned(
-          top: 10,
-          right: 10,
-          child: GestureDetector(
-            onTap: onEdit,
-            child: const Icon(Icons.create_sharp, size: 30),
-          ),
-        ),
-        Positioned(
-          bottom: 10,
-          right: 10,
-          child: GestureDetector(
-            onTap: onDelete,
-            child: const Icon(Icons.delete_forever, size: 30, color: Colors.red),
-          ),
-        ),
-      ],
-    );
-  }
-}
+import 'model/alarm_database.dart';
 
 class ClockHomePage extends StatefulWidget {
   const ClockHomePage({super.key, required this.title});
@@ -62,31 +13,50 @@ class ClockHomePage extends StatefulWidget {
 }
 
 class _ClockHomePageState extends State<ClockHomePage> {
-  List<AlarmSettings> alarms = [];
+  late Future<List<AlarmSettings>> _alarms;
 
   @override
   void initState() {
     super.initState();
-    _loadAlarms();
+    _fetchAlarms();
   }
 
-  Future<void> _loadAlarms() async {
-    print("loadAlarms実行");
-    final updatedAlarms = AlarmManager.getAllAlarms().cast<AlarmSettings>();
+  void _fetchAlarms() {
     setState(() {
-      alarms = updatedAlarms;
+      _alarms = AlarmDatabase.instance.getAllAlarms();
     });
   }
 
-
-  void handleDelete(int id) async {
-    await AlarmManager.cancelAlarm(id);
-    setState(() {
-      alarms.removeWhere((alarm) => alarm.id == id);
-    });
+  void _deleteAlarm(int id) async {
+    await AlarmDatabase.instance.deleteAlarm(id);
+    _fetchAlarms();
   }
 
-
+  void _addTestAlarm() async {
+    final now = DateTime.now().add(const Duration(minutes: 1));
+    final alarm = AlarmSettings(
+      id: now.millisecondsSinceEpoch % 100000, // 一意のIDを生成
+      dateTime: now,
+      assetAudioPath: 'assets/alarm.mp3',
+      loopAudio: true,
+      vibrate: true,
+      warningNotificationOnKill: false,
+      androidFullScreenIntent: true,
+      volumeSettings: VolumeSettings.fixed(
+        volume: 0.8,
+        volumeEnforced: true,
+      ),
+      notificationSettings: const NotificationSettings(
+        title: 'テストアラーム',
+        body: '1分後に鳴ります',
+        stopButton: '停止',
+        icon: 'notification_icon',
+      ),
+    );
+    await AlarmDatabase.instance.insertAlarm(alarm);
+    await Alarm.set(alarmSettings: alarm);
+    _fetchAlarms();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,52 +65,39 @@ class _ClockHomePageState extends State<ClockHomePage> {
         title: Text(widget.title),
         backgroundColor: Colors.purple,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text("アラーム一覧"),
-            ListView.separated(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: alarms.length,
-              itemBuilder: (context, index) {
-                final alarm = alarms[index];
-                String time = "${alarm.dateTime.hour}:${alarm.dateTime.minute}";
-                String date = "${alarm.dateTime.month}月${alarm.dateTime.day}日";
-                return Stack(
-                  children: [
-                    SizedBox(
-                      height: 80,
-                      child: ListTile(
-                        contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                      ),
-                    ),
-                    Positioned.fill(
-                      child: CornerWidget(
-                        time: time,
-                        date: date,
-                        onEdit: () {},
-                        onDelete: () => handleDelete(alarm.id),
-                      ),
-                    ),
-                  ],
-                );
-              },
-              separatorBuilder: (context, index) {
-                return const Divider(color: Colors.black);
-              },
-            ),
-          ],
-        ),
+      body: FutureBuilder<List<AlarmSettings>>(
+        future: _alarms,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('エラー: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('アラームがありません'));
+          }
+
+          final alarms = snapshot.data!;
+
+          return ListView.separated(
+            itemCount: alarms.length,
+            itemBuilder: (context, index) {
+              final alarm = alarms[index];
+              return ListTile(
+                title: Text('${alarm.dateTime.hour}:${alarm.dateTime.minute}'),
+                subtitle: Text('${alarm.dateTime.month}/${alarm.dateTime.day}'),
+                trailing: IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                  onPressed: () => _deleteAlarm(alarm.id),
+                ),
+              );
+            },
+            separatorBuilder: (context, index) => const Divider(),
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
-        onPressed: () async {
-          DateTime now = DateTime.now().add(const Duration(minutes: 1));
-          await AlarmManager.setAlarm(now);
-          _loadAlarms();
-        },
+        onPressed: _addTestAlarm,
       ),
     );
   }
