@@ -55,8 +55,8 @@ class _ClockHomePageState extends State<ClockHomePage> {
       ),
     );
     await AlarmDatabase.instance.insertAlarm(alarm);
-    await Alarm.set(alarmSettings: alarm);
     _fetchAlarms();
+    await Alarm.set(alarmSettings: alarm);
   }
 
   @override
