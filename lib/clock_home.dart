@@ -1,25 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:alarm/alarm.dart';
 import 'package:memorization_and_clock/alarm_setting.dart';
+import 'model/alarm_manager.dart';
 
 class CornerWidget extends StatelessWidget {
   final VoidCallback onEdit;
   final VoidCallback onDelete;
+  final String time;
+  final String date;
 
-  const CornerWidget({Key? key, required this.onEdit, required this.onDelete}) : super(key: key);
+  const CornerWidget({
+    Key? key,
+    required this.onEdit,
+    required this.onDelete,
+    required this.time,
+    required this.date,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        const Positioned(
+        Positioned(
           top: 10,
           left: 10,
-          child: Text('6:00', style: TextStyle(fontSize: 18)),
+          child: Text(time, style: const TextStyle(fontSize: 18)),
         ),
-        const Positioned(
+        Positioned(
           bottom: 10,
           left: 10,
-          child: Text('3月3日(月)', style: TextStyle(fontSize: 18)),
+          child: Text(date, style: const TextStyle(fontSize: 18)),
         ),
         Positioned(
           top: 10,
@@ -42,23 +52,6 @@ class CornerWidget extends StatelessWidget {
   }
 }
 
-class ClockHome extends StatelessWidget {
-  const ClockHome({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const ClockHomePage(title: 'メモクロ'),
-
-    );
-  }
-}
-
 class ClockHomePage extends StatefulWidget {
   const ClockHomePage({super.key, required this.title});
 
@@ -69,18 +62,31 @@ class ClockHomePage extends StatefulWidget {
 }
 
 class _ClockHomePageState extends State<ClockHomePage> {
-  final items = ["AAA", "BBB", "CCC", "DDD", "EEE", "FFF", "GGG", "HHH", "III", "JJJ", "KKK", "LLL", "MMM", "NNN"];
+  List<AlarmSettings> alarms = [];
 
-  void handleEdit(String item) {
-    print("編集: $item");
+  @override
+  void initState() {
+    super.initState();
+    _loadAlarms();
   }
 
-  void handleDelete(String item) {
-    print("削除: $item");
+  Future<void> _loadAlarms() async {
+    print("loadAlarms実行");
+    final updatedAlarms = AlarmManager.getAllAlarms().cast<AlarmSettings>();
     setState(() {
-      items.remove(item);
+      alarms = updatedAlarms;
     });
   }
+
+
+  void handleDelete(int id) async {
+    await AlarmManager.cancelAlarm(id);
+    setState(() {
+      alarms.removeWhere((alarm) => alarm.id == id);
+    });
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -93,26 +99,29 @@ class _ClockHomePageState extends State<ClockHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text("Flutterスクロールサンプル"),
+            const Text("アラーム一覧"),
             ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: items.length,
+              itemCount: alarms.length,
               itemBuilder: (context, index) {
-                final item = items[index];
+                final alarm = alarms[index];
+                String time = "${alarm.dateTime.hour}:${alarm.dateTime.minute}";
+                String date = "${alarm.dateTime.month}月${alarm.dateTime.day}日";
                 return Stack(
                   children: [
                     SizedBox(
                       height: 80,
                       child: ListTile(
-                        title: null,
                         contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                       ),
                     ),
                     Positioned.fill(
                       child: CornerWidget(
-                        onEdit: () => handleEdit(item),
-                        onDelete: () => handleDelete(item),
+                        time: time,
+                        date: date,
+                        onEdit: () {},
+                        onDelete: () => handleDelete(alarm.id),
                       ),
                     ),
                   ],
@@ -126,12 +135,11 @@ class _ClockHomePageState extends State<ClockHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => AlarmSetting()),
-          );
+        child: const Icon(Icons.add),
+        onPressed: () async {
+          DateTime now = DateTime.now().add(const Duration(minutes: 1));
+          await AlarmManager.setAlarm(now);
+          _loadAlarms();
         },
       ),
     );
