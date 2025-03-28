@@ -20,12 +20,7 @@ class _ClockHomePageState extends State<ClockHomePage> {
   void initState() {
     super.initState();
     _fetchAlarms();
-    Alarm.ringStream.stream.listen((alarm) async {
-      print("現在のidは ${alarm.id} 回です");
 
-      final questionId = await AlarmDatabase.instance.getQuestionId(alarm);
-      print("現在の問題集idは ${questionId ?? '不明'} です");
-    });
 
   }
 
@@ -106,13 +101,13 @@ class _ClockHomePageState extends State<ClockHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
-        /*onPressed: () {
+        onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => AlarmSetting()),
           );
-        },*/
-        onPressed: _addTestAlarm,//デバッグ用。＋ボタンを押したとき、id1問題集id1のアラームを1分後に作成.
+        },
+        //onPressed: _addTestAlarm,//デバッグ用。＋ボタンを押したとき、id1問題集id1のアラームを1分後に作成.
       ),
     );
   }
