@@ -19,6 +19,8 @@ class _ClockHomePageState extends State<ClockHomePage> {
   void initState() {
     super.initState();
     _fetchAlarms();
+
+
   }
 
   void _fetchAlarms() {
@@ -34,7 +36,7 @@ class _ClockHomePageState extends State<ClockHomePage> {
   }
 
   void _addTestAlarm() async {
-    final now = DateTime.now().add(const Duration(seconds: 10));
+    final now = DateTime.now().add(const Duration(seconds: 30));
     final alarm = AlarmSettings(
       id: 1, // 一意のIDを生成
       dateTime: now,
@@ -54,7 +56,7 @@ class _ClockHomePageState extends State<ClockHomePage> {
         icon: 'notification_icon',
       ),
     );
-    await AlarmDatabase.instance.insertAlarm(alarm);
+    await AlarmDatabase.instance.insertAlarm(alarm,1);//テスト用で問題id1を選択
     _fetchAlarms();
     await Alarm.set(alarmSettings: alarm);
   }
@@ -98,7 +100,13 @@ class _ClockHomePageState extends State<ClockHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
-        onPressed: _addTestAlarm,
+        /*onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AlarmSetting()),
+          );
+        },*/
+        onPressed: _addTestAlarm,//デバッグ用。＋ボタンを押したとき、id1問題集id1のアラームを1分後に作成.
       ),
     );
   }
