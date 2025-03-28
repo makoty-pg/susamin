@@ -39,8 +39,6 @@ class AlarmDatabase {
       androidFullScreenIntent INTEGER NOT NULL DEFAULT 1,
       volume REAL NOT NULL DEFAULT 0.8,
       volumeEnforced INTEGER NOT NULL DEFAULT 1,
-      title TEXT NOT NULL DEFAULT '',
-      body TEXT NOT NULL DEFAULT '',
     )
   ''');
   }
@@ -60,8 +58,6 @@ class AlarmDatabase {
       'androidFullScreenIntent': alarm.androidFullScreenIntent ? 1 : 0,
       'volume': alarm.volumeSettings.volume,
       'volumeEnforced': alarm.volumeSettings.volumeEnforced ? 1 : 0,
-      'title': alarm.notificationSettings.title,
-      'body': alarm.notificationSettings.body,
     });
   }
 
@@ -87,14 +83,22 @@ class AlarmDatabase {
         volumeEnforced: e['volumeEnforced'] == 1,
       ),
       notificationSettings: NotificationSettings(
-        title: e['title'],
-        body: e['body'],
+        title: 'テストアラーム',
+        body: '1分後に鳴ります',
+        stopButton: '停止',
+        icon: 'notification_icon',
       ),
     )).toList();
   }
 
-  Future<void> syncAlarmsWithSystem() async {//データベースとalarmを同期させる
+  Future<void> syncAlarmsWithSystem() async {
+    // すべてのアラームを削除
+    await Alarm.stopAll();
+
+    // データベースからアラームを取得
     final alarms = await getAllAlarms();
+
+    // 取得したアラームを再登録
     for (var alarm in alarms) {
       await Alarm.set(
         alarmSettings: AlarmSettings(
@@ -111,4 +115,5 @@ class AlarmDatabase {
       );
     }
   }
+
 }
