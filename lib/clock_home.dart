@@ -1,7 +1,6 @@
 import 'package:alarm/model/volume_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:alarm/alarm.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'model/alarm_database.dart';
 
 class ClockHomePage extends StatefulWidget {
@@ -15,36 +14,15 @@ class ClockHomePage extends StatefulWidget {
 
 class _ClockHomePageState extends State<ClockHomePage> {
   late Future<List<AlarmSettings>> _alarms;
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-
-  Future<void> _initializeNotificationChannel() async {
-      const AndroidNotificationChannel channel = AndroidNotificationChannel(
-        'alarm_channel',
-        'アラーム通知',
-        description: 'アラーム通知用のチャンネルです。',
-        importance: Importance.max,
-      );
-
-      await flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
-          ?.createNotificationChannel(channel);
-
-      const AndroidInitializationSettings initializationSettingsAndroid =
-      AndroidInitializationSettings('@mipmap/ic_launcher');
-      const InitializationSettings initializationSettings =
-      InitializationSettings(android: initializationSettingsAndroid);
-      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-      print("通知プラグインが初期化されました");
-  }
 
   @override
   void initState() {
     super.initState();
-    _initializeNotificationChannel();
     _fetchAlarms();
   }
 
   void _fetchAlarms() {
+    AlarmDatabase.instance.syncAlarmsWithSystem();
     setState(() {
       _alarms = AlarmDatabase.instance.getAllAlarms();
     });
@@ -56,12 +34,12 @@ class _ClockHomePageState extends State<ClockHomePage> {
   }
 
   void _addTestAlarm() async {
-    final now = DateTime.now().add(const Duration(seconds: 10));
+    final now = DateTime.now().add(const Duration(minutes: 1));
     final alarm = AlarmSettings(
-      id: now.millisecondsSinceEpoch % 100000, // 一意のIDを生成
+      id: 1, // 一意のIDを生成
       dateTime: now,
       assetAudioPath: 'assets/alarm.mp3',
-      loopAudio: true,
+      loopAudio: false,
       vibrate: true,
       warningNotificationOnKill: false,
       androidFullScreenIntent: true,
@@ -72,29 +50,13 @@ class _ClockHomePageState extends State<ClockHomePage> {
       notificationSettings: const NotificationSettings(
         title: 'テストアラーム',
         body: '1分後に鳴ります',
+        stopButton: '停止',
+        icon: 'notification_icon',
       ),
     );
     await AlarmDatabase.instance.insertAlarm(alarm);
     _fetchAlarms();
-
     await Alarm.set(alarmSettings: alarm);
-
-    await flutterLocalNotificationsPlugin.show(
-      alarm.id,
-      alarm.notificationSettings.title,
-      alarm.notificationSettings.body,
-      NotificationDetails(
-        android: AndroidNotificationDetails(
-          'alarm_channel',
-          'アラーム通知',
-          channelDescription: 'アラーム通知用のチャンネルです。',
-          importance: Importance.max,
-          priority: Priority.high,
-          icon: '@mipmap/ic_launcher',
-        ),
-      ),
-    );
-
   }
 
   @override
