@@ -2,7 +2,6 @@ import 'package:alarm/model/volume_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:alarm/alarm.dart';
 import 'model/alarm_database.dart';
-import 'package:memorization_and_clock/alarm_setting.dart';
 
 class ClockHomePage extends StatefulWidget {
   const ClockHomePage({super.key, required this.title});
