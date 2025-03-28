@@ -8,4 +8,5 @@ void main() async {
   await Alarm.init(); // await を使うために main() を async にする
   AlarmDatabase.instance.syncAlarmsWithSystem();
   runApp(const MyApp());
+
 }
