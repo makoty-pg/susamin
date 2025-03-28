@@ -34,7 +34,7 @@ class _ClockHomePageState extends State<ClockHomePage> {
   }
 
   void _addTestAlarm() async {
-    final now = DateTime.now().add(const Duration(minutes: 1));
+    final now = DateTime.now().add(const Duration(seconds: 10));
     final alarm = AlarmSettings(
       id: 1, // 一意のIDを生成
       dateTime: now,
