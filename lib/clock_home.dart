@@ -2,6 +2,7 @@ import 'package:alarm/model/volume_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:alarm/alarm.dart';
 import 'model/alarm_database.dart';
+import 'package:memorization_and_clock/alarm_setting.dart';
 
 class ClockHomePage extends StatefulWidget {
   const ClockHomePage({super.key, required this.title});
@@ -19,6 +20,13 @@ class _ClockHomePageState extends State<ClockHomePage> {
   void initState() {
     super.initState();
     _fetchAlarms();
+    Alarm.ringStream.stream.listen((alarm) async {
+      print("現在のidは ${alarm.id} 回です");
+
+      final questionId = await AlarmDatabase.instance.getQuestionId(alarm);
+      print("現在の問題集idは ${questionId ?? '不明'} です");
+    });
+
   }
 
   void _fetchAlarms() {
@@ -54,9 +62,9 @@ class _ClockHomePageState extends State<ClockHomePage> {
         icon: 'notification_icon',
       ),
     );
-    await AlarmDatabase.instance.insertAlarm(alarm);
+    await AlarmDatabase.instance.insertAlarm(alarm,1);//テスト用で問題id1を選択
     _fetchAlarms();
-    await Alarm.set(alarmSettings: alarm);
+    //await Alarm.set(alarmSettings: alarm);
   }
 
   @override
@@ -98,7 +106,13 @@ class _ClockHomePageState extends State<ClockHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
-        onPressed: _addTestAlarm,
+        /*onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AlarmSetting()),
+          );
+        },*/
+        onPressed: _addTestAlarm,//デバッグ用。＋ボタンを押したとき、id1問題集id1のアラームを1分後に作成.
       ),
     );
   }
