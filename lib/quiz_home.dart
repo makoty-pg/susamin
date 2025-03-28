@@ -24,10 +24,34 @@ class _QuizHomePageState extends State<QuizHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('メモクロ'),
-        backgroundColor: Colors.purple,
+        title: const Center(
+          child: Text(
+            'メモクロ',
+            style: TextStyle(
+              fontSize: 28, // 文字を大きくする
+              fontWeight: FontWeight.bold, // 太字
+              color: Colors.white, // 白色
+              letterSpacing: 2.0, // 文字間を広げる
+            ),
+          ),
+        ),
+        backgroundColor: Colors.purple, // 背景色
+        centerTitle: true, // タイトルを中央揃え
       ),
-      body: _buildQuizList(),
+
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFFebc0fd), // ピンク系
+              Color(0xFFd9ded8), // グレー系
+            ],
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+          ),
+        ),
+        child: _buildQuizList(), // クイズリストを表示
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _addQuizList,
         child: const Icon(Icons.add),
