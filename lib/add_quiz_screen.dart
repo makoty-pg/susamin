@@ -29,37 +29,66 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('メモクロ'),
-        backgroundColor: Colors.purple,
-      ),
-      body: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
-              ),
-              onPressed: _quizData.isEmpty
-                ? null
-                : () async {
-                quizMap = await getQuizMap(widget.ele.id!);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => QuizScreen(quizMap: quizMap, isTest: false, alarmId: -1,),
-                  ),
-                );
-              },
-              child: const Text("解答スタート"),
+        title: const Center(
+          child: Text(
+            'メモクロ',
+            style: TextStyle(
+              fontSize: 28, // 文字を大きくする
+              fontWeight: FontWeight.bold, // 太字
+              color: Colors.white, // 白色
+              letterSpacing: 2.0, // 文字間を広げる
             ),
           ),
-          Expanded(
-              child: _buildQuizData(),
-          )
-        ],
+        ),
+        backgroundColor: Colors.purple, // 背景色
+        centerTitle: true, // タイトルを中央揃え
       ),
+
+      body:Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFFebc0fd), // ピンク系
+              Color(0xFFd9ded8), // グレー系
+            ],
+            begin: Alignment.bottomCenter, // 下から上へのグラデーション
+            end: Alignment.topCenter, // 上までグラデーション
+          ),
+        ),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                ),
+                onPressed: _quizData.isEmpty
+                    ? null
+                    : () async {
+                  quizMap = await getQuizMap(widget.ele.id!);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => QuizScreen(
+                        quizMap: quizMap,
+                        isTest: false,
+                        alarmId: -1,
+                      ),
+                    ),
+                  );
+                },
+                child: const Text("解答スタート"),
+              ),
+            ),
+            Expanded(
+              child: _buildQuizData(),
+            ),
+          ],
+        ),
+      ),
+
       floatingActionButton: FloatingActionButton(
         onPressed:  () async {
           final result = await Navigator.push(
