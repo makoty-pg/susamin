@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
 import 'package:memorization_and_clock/model/load_quiz_data.dart';
 import 'package:memorization_and_clock/model/quiz_manager.dart';
-
+import 'model/alarm_database.dart';
+import 'package:alarm/alarm.dart';
+import 'package:alarm/model/volume_settings.dart';
 
 class AlarmSetting extends StatefulWidget {
   const AlarmSetting({super.key});
@@ -12,7 +14,7 @@ class AlarmSetting extends StatefulWidget {
 }
 
 class _AlarmSettingState extends State<AlarmSetting> {
-  DateTime defaultDateTime = DateTime.now().add(const Duration(days: 1)).copyWith(hour: 6, minute: 0);
+  DateTime selectedDateTime = DateTime.now().add(const Duration(days: 1)).copyWith(hour: 6, minute: 0);
   String dateText = '';
   String? dropdownValue;
   List<QuizList> quizList = [];
@@ -20,11 +22,11 @@ class _AlarmSettingState extends State<AlarmSetting> {
   @override
   void initState() {
     super.initState();
-    dateText = '設定日時: ${defaultDateTime.year}年${defaultDateTime.month}月${defaultDateTime.day}日 ${defaultDateTime.hour}:${defaultDateTime.minute}';
+    dateText = '設定日時: ${selectedDateTime.year}年${selectedDateTime.month}月${selectedDateTime.day}日 ${selectedDateTime.hour}:${selectedDateTime.minute}';
     loadQuizData();
   }
 
-  Future<void> loadQuizData() async {////////////////////この辺の処理あってるかみてほし
+  Future<void> loadQuizData() async {
     LoadQuizData loadQuizData = LoadQuizData();
     List<QuizList> loadedQuizList = await loadQuizData.loadQuizList();
     setState(() {
@@ -33,6 +35,34 @@ class _AlarmSettingState extends State<AlarmSetting> {
         dropdownValue = quizList[0].title;
       }
     });
+  }
+
+  Future<void> _addAlarm() async {
+    if (dropdownValue == null) return;
+
+    int? quizId = quizList.firstWhere((quiz) => quiz.title == dropdownValue).id;
+    final alarm = AlarmSettings(
+      id: DateTime.now().millisecondsSinceEpoch, // 一意のID
+      dateTime: selectedDateTime,
+      assetAudioPath: 'assets/alarm.mp3',
+      loopAudio: false,
+      vibrate: true,
+      warningNotificationOnKill: false,
+      androidFullScreenIntent: true,
+      volumeSettings: VolumeSettings.fixed(
+        volume: 0.8,
+        volumeEnforced: true,
+      ),
+      notificationSettings: const NotificationSettings(
+        title: 'アラーム',
+        body: '設定した時間になりました',
+        stopButton: '停止',
+        icon: 'notification_icon',
+      ),
+    );
+
+    await AlarmDatabase.instance.insertAlarm(alarm, quizId!);
+    Navigator.pop(context);
   }
 
   @override
@@ -64,11 +94,12 @@ class _AlarmSettingState extends State<AlarmSetting> {
                   maxTime: DateTime.now().add(const Duration(days: 7)),
                   onConfirm: (date) {
                     setState(() {
+                      selectedDateTime = date;
                       dateText =
                       '設定日時: ${date.year}年${date.month}月${date.day}日 ${date.hour}:${date.minute}';
                     });
                   },
-                  currentTime: defaultDateTime,
+                  currentTime: selectedDateTime,
                   locale: LocaleType.jp,
                 );
               },
@@ -107,18 +138,10 @@ class _AlarmSettingState extends State<AlarmSetting> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          // アラーム登録の処理をここに書く
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('アラームが登録されました！')),
-          );
-        },
+        onPressed: _addAlarm,
         label: const Text('追加'),
         backgroundColor: Colors.purple,
       ),
     );
   }
-
-
 }
-

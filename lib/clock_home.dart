@@ -101,11 +101,12 @@ class _ClockHomePageState extends State<ClockHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
-        onPressed: () {
-          Navigator.push(
+        onPressed: () async {
+          await Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => AlarmSetting()),
           );
+          _fetchAlarms(); // 戻ってきた後に更新
         },
         //onPressed: _addTestAlarm,//デバッグ用。＋ボタンを押したとき、id1問題集id1のアラームを1分後に作成.
       ),
