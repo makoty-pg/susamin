@@ -1,5 +1,8 @@
+import 'package:alarm/alarm.dart';
 import 'package:flutter/material.dart';
 import 'package:memorization_and_clock/quiz_screen.dart';
+
+import 'model/alarm_database.dart';
 
 class ResultScreen extends StatefulWidget {
   const ResultScreen({super.key, required this.result, required this.quizMap, required this.isTest, required this.alarmId});
@@ -18,6 +21,8 @@ class _ResultScreenState extends State<ResultScreen> {
   Future<void> goToScreen(BuildContext context, int rate) async {
     if (widget.isTest) {
       if (rate >= 80.0) {
+        await Alarm.stopAll();
+        await AlarmDatabase.instance.deleteAlarm(widget.alarmId);
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else {
         Navigator.pushReplacement(
