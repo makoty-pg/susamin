@@ -45,7 +45,6 @@ class AlarmDatabase {
     volumeEnforced INTEGER NOT NULL DEFAULT 1,
     title TEXT NOT NULL DEFAULT 'Alarm',
     body TEXT NOT NULL DEFAULT 'Alarm is ringing',
-    stopButton TEXT NOT NULL DEFAULT 'Stop',
     icon TEXT NOT NULL DEFAULT 'notification_icon'
   )
 ''');
@@ -69,7 +68,6 @@ class AlarmDatabase {
       'volumeEnforced': alarm.volumeSettings.volumeEnforced ? 1 : 0,
       'title': alarm.notificationSettings.title,
       'body': alarm.notificationSettings.body,
-      'stopButton': alarm.notificationSettings.stopButton,
       'icon': alarm.notificationSettings.icon,
     });
   }
@@ -94,7 +92,6 @@ class AlarmDatabase {
       notificationSettings: NotificationSettings(
         title: e['title'] ?? 'Alarm',
         body: e['body'] ?? 'Alarm is ringing',
-        stopButton: e['stopButton'] ?? 'Stop',
         icon: e['icon'] ?? 'notification_icon',
       ),
     )).toList();

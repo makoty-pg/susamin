@@ -1,6 +1,7 @@
 import 'package:alarm/model/volume_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:alarm/alarm.dart';
+import 'alarm_setting.dart';
 import 'model/alarm_database.dart';
 
 class ClockHomePage extends StatefulWidget {
@@ -103,7 +104,7 @@ class _ClockHomePageState extends State<ClockHomePage> {
         onPressed: () async {
           await Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => AlarmSetting()),
+            MaterialPageRoute(builder: (context) => const AlarmSetting()),
           );
           _fetchAlarms(); // 戻ってきた後に更新
         },

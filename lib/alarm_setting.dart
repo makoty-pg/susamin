@@ -56,7 +56,6 @@ class _AlarmSettingState extends State<AlarmSetting> {
       notificationSettings: const NotificationSettings(
         title: 'アラーム',
         body: '設定した時間になりました',
-        stopButton: '停止',
         icon: 'notification_icon',
       ),
     );

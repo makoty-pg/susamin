@@ -10,16 +10,16 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Alarm.init(); // await を使うために main() を async にする
   AlarmDatabase.instance.syncAlarmsWithSystem();
-  Alarm.ringStream.stream.listen((alarm) async {
-    print("現在のidは ${alarm.id} 回です");
-    List<Map> quizMap = await getQuizMap(1);
-    navigatorKey.currentState?.push(
-      MaterialPageRoute(builder: (context) => QuizScreen(quizMap: quizMap, isTest: true, alarmId: alarm.id)),
-    );
-    final questionId = await AlarmDatabase.instance.getQuestionId(alarm);
-    print("現在の問題集idは ${questionId ?? '不明'} です");
-  });
 
   runApp(const MyApp());
 
+  Alarm.ringStream.stream.listen((alarm) async {
+    print("現在のidは ${alarm.id} 回です");
+    final questionId = await AlarmDatabase.instance.getQuestionId(alarm);
+    List<Map> quizMap = await getQuizMap(questionId!);
+    navigatorKey.currentState?.push(
+      MaterialPageRoute(builder: (context) => QuizScreen(quizMap: quizMap, isTest: true, alarmId: alarm.id)),
+    );
+    print("現在の問題集idは ${questionId ?? '不明'} です");
+  });
 }
