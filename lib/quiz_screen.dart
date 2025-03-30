@@ -53,44 +53,83 @@ class _QuizScreenState extends State<QuizScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: index < quizMap.length
-      ? CustomScrollView(
-        slivers: <Widget>[
-          SliverList(
-            delegate: SliverChildListDelegate([
-              Padding(
-                  padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height / 3
-                  )
-              ),
-              Text(
-                quizMap[index]['question'],
-                textAlign: TextAlign.center,
-              ),
-            ])
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFFE0C3FC), Color(0xFF8EC5FC)], // グラデーションの色
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-                (context, key) {
+        ),
+        child: index < quizMap.length
+            ? CustomScrollView(
+          slivers: <Widget>[
+            SliverList(
+              delegate: SliverChildListDelegate([
+                Padding(
+                  padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.height / 3
+                  ),
+                ),
+                Center(
+                  child: Text(
+                    quizMap[index]['question'],
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 24, // フォントサイズ
+                      fontWeight: FontWeight.bold, // 太字
+                      color: Colors.white, // 文字色
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20), // 質問と選択肢の間にスペース
+              ]),
+            ),
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                    (context, key) {
                   int useKey = key + 1;
-                  return TextButton(
-                    onPressed: () async {
-                      if (!isSelectNow) return;
-                      await updateQuiz(context, useKey);
-                    },
-                    child: isSelectNow
-                    ? Text(quizMap[index]["option$useKey"])
-                    : quizMap[index]["answer"] == useKey
-                      ? Text(quizMap[index]["option$useKey"] + "○")
-                      : Text(quizMap[index]["option$useKey"] + "×")
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        if (!isSelectNow) return;
+                        await updateQuiz(context, useKey);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: isSelectNow
+                            ? Colors.white
+                            : (quizMap[index]["answer"] == useKey
+                            ? Colors.green
+                            : Colors.red),
+                        padding: EdgeInsets.symmetric(vertical: 12.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: Text(
+                        quizMap[index]["option$useKey"] +
+                            (isSelectNow
+                                ? ""
+                                : quizMap[index]["answer"] == useKey
+                                ? " ○"
+                                : " ×"),
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
                   );
                 },
-              childCount: 4,
-            )
-          ),
-        ],
-      )
-      : Container(),
+                childCount: 4,
+              ),
+            ),
+          ],
+        )
+            : Center(child: CircularProgressIndicator()), // クイズ終了時のローディング表示
+      ),
     );
   }
 }

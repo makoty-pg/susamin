@@ -61,20 +61,48 @@ class _ResultScreenState extends State<ResultScreen> {
     }
 
     return Scaffold(
-      body: Center(
-        child: Column(
-          //Columnの中に入れたものは縦に並べられる．Rowだと横に並べられる
-          mainAxisAlignment: MainAxisAlignment.center, //Coloumの中身を真ん中に配置
-          children: <Widget>[
-            Text(comment),
-            Text('正答数${widget.result}'),
-            Text('正答率$rate%'),
-            ElevatedButton(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFFE0C3FC), Color(0xFF8EC5FC)], // 120度のグラデーション
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                comment,
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
+              ),
+              SizedBox(height: 10),
+              Text(
+                '正答数 ${widget.result}',
+                style: TextStyle(fontSize: 18, color: Colors.black87),
+              ),
+              Text(
+                '正答率 $rate%',
+                style: TextStyle(fontSize: 18, color: Colors.black87),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
                 onPressed: () async {
                   await goToScreen(context, rate);
                 },
-                child: Text(buttonText)),
-          ],
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.black,
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: Text(buttonText, style: TextStyle(fontSize: 16)),
+              ),
+            ],
+          ),
         ),
       ),
     );
