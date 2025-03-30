@@ -66,8 +66,19 @@ class _ClockHomePageState extends State<ClockHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
-        backgroundColor: Colors.purple,
+        title: const Center(
+          child: Text(
+            'メモクロ',
+            style: TextStyle(
+              fontSize: 28, // 文字を大きくする
+              fontWeight: FontWeight.bold, // 太字
+              color: Colors.white, // 白色
+              letterSpacing: 2.0, // 文字間を広げる
+            ),
+          ),
+        ),
+        backgroundColor: Colors.purple, // 背景色
+        centerTitle: true, // タイトルを中央揃え
       ),
       body: FutureBuilder<List<AlarmSettings>>(
         future: _alarms,
