@@ -85,14 +85,40 @@ class _QuizFormatScreenState extends State<QuizFormatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.ele == null ? 'クイズ追加' : 'クイズ編集'),
+        title: Text(
+          widget.ele == null ? 'クイズ追加' : 'クイズ編集',
+          style: const TextStyle(
+            fontSize: 24, // 文字サイズ
+            fontWeight: FontWeight.bold, // 太字
+            color: Colors.white, // 白色
+            shadows: [
+              Shadow(
+                blurRadius: 10.0, // ぼかしの強さ
+                color: Colors.white70, // 透明感のある白い影
+                offset: Offset(2, 2), // 影の位置
+              ),
+            ],
+          ),
+        ),
         backgroundColor: Colors.purple,
+        centerTitle: true, // タイトルを中央揃え
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
+
+      body: Container(
+      decoration: const BoxDecoration(
+      gradient: LinearGradient(
+    colors: [
+      Color(0xFFebc0fd), // ピンク系
+      Color(0xFFd9ded8)], //
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    ),
+    ),
+    child: Padding(
+    padding: const EdgeInsets.all(16.0),
+    child: Form(
+    key: _formKey,
+    child: ListView(
             children: [
               TextFormField(
                 controller: _questionController,
@@ -165,6 +191,7 @@ class _QuizFormatScreenState extends State<QuizFormatScreen> {
             ],
           ),
         ),
+      ),
       ),
     );
   }

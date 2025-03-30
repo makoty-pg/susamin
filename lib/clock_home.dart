@@ -2,7 +2,6 @@ import 'package:alarm/model/volume_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:alarm/alarm.dart';
 import 'model/alarm_database.dart';
-import 'package:memorization_and_clock/alarm_setting.dart';
 
 class ClockHomePage extends StatefulWidget {
   const ClockHomePage({super.key, required this.title});
@@ -37,7 +36,7 @@ class _ClockHomePageState extends State<ClockHomePage> {
   }
 
   void _addTestAlarm() async {
-    final now = DateTime.now().add(const Duration(minutes: 1));
+    final now = DateTime.now().add(const Duration(seconds: 30));
     final alarm = AlarmSettings(
       id: 1, // 一意のIDを生成
       dateTime: now,
@@ -59,7 +58,7 @@ class _ClockHomePageState extends State<ClockHomePage> {
     );
     await AlarmDatabase.instance.insertAlarm(alarm,1);//テスト用で問題id1を選択
     _fetchAlarms();
-    //await Alarm.set(alarmSettings: alarm);
+    await Alarm.set(alarmSettings: alarm);
   }
 
   @override
