@@ -22,7 +22,7 @@ class _AlarmSettingState extends State<AlarmSetting> {
   @override
   void initState() {
     super.initState();
-    dateText = '設定日時: ${selectedDateTime.year}年${selectedDateTime.month}月${selectedDateTime.day}日 ${selectedDateTime.hour}:${selectedDateTime.minute}';
+    dateText = '設定日時: ${selectedDateTime.year}年${selectedDateTime.month}月${selectedDateTime.day}日 ${selectedDateTime.hour}:${selectedDateTime.minute.toString().padLeft(2, '0')}';
     loadQuizData();
   }
 
@@ -82,74 +82,103 @@ class _AlarmSettingState extends State<AlarmSetting> {
         backgroundColor: Colors.purple, // 背景色
         centerTitle: true, // タイトルを中央揃え
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 50, left: 20, right: 20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              dateText,
-              style: const TextStyle(
-                fontSize: 24,
-              ),
-            ),
-            const SizedBox(height: 10),
-            TextButton(
-              onPressed: () {
-                DatePicker.showDateTimePicker(
-                  context,
-                  showTitleActions: true,
-                  minTime: DateTime.now(),
-                  maxTime: DateTime.now().add(const Duration(days: 7)),
-                  onConfirm: (date) {
-                    setState(() {
-                      selectedDateTime = date;
-                      dateText =
-                      '設定日時: ${date.year}年${date.month}月${date.day}日 ${date.hour}:${date.minute}';
-                    });
-                  },
-                  currentTime: selectedDateTime,
-                  locale: LocaleType.jp,
-                );
-              },
-              child: const Text(
-                '日付と時刻を変更',
-                style: TextStyle(
-                  fontSize: 24,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFFebc0fd), // ピンク系
+              Color(0xFFd9ded8)], // 120度のグラデーション
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(top: 50, left: 20, right: 20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                dateText,
+                style: const TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white, // 白色のテキスト
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                const Text(
-                  '問題の選択:',
-                  style: TextStyle(fontSize: 18),
+              const SizedBox(height: 50),
+              ElevatedButton(
+                onPressed: () {
+                  DatePicker.showDateTimePicker(
+                    context,
+                    showTitleActions: true,
+                    minTime: DateTime.now(),
+                    maxTime: DateTime.now().add(const Duration(days: 7)),
+                    onConfirm: (date) {
+                      setState(() {
+                        selectedDateTime = date;
+                        dateText =
+                        '設定日時: ${date.year}年${date.month}月${date.day}日 ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
+                      });
+                    },
+                    currentTime: selectedDateTime,
+                    locale: LocaleType.jp,
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.purple, // ボタンの背景色
+                  foregroundColor: Colors.white, // テキストの色
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10), // 角を丸める
+                  ),
                 ),
-                const SizedBox(width: 10),
-                DropdownButton<String>(
-                  value: dropdownValue,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      dropdownValue = newValue;
-                    });
-                  },
-                  items: quizList.map<DropdownMenuItem<String>>((QuizList quiz) {
-                    return DropdownMenuItem<String>(
-                      value: quiz.title,
-                      child: Text(quiz.title),
-                    );
-                  }).toList(),
+                child: const Text(
+                  '日付と時刻を変更',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ],
-            ),
-          ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  const Text(
+                    '問題の選択:',
+                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  ),
+                  const SizedBox(width: 10),
+                  DropdownButton<String>(
+                    value: dropdownValue,
+                    dropdownColor: Colors.white, // ドロップダウン背景色
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        dropdownValue = newValue;
+                      });
+                    },
+                    items: quizList.map<DropdownMenuItem<String>>((QuizList quiz) {
+                      return DropdownMenuItem<String>(
+                        value: quiz.title,
+                        child: Text(
+                          quiz.title,
+                          style: const TextStyle(color: Colors.black), // 選択肢の文字色
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _addAlarm,
-        label: const Text('追加'),
+        label: const Text(
+          '追加',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: Colors.purple,
       ),
     );

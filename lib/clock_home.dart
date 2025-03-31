@@ -80,35 +80,61 @@ class _ClockHomePageState extends State<ClockHomePage> {
         backgroundColor: Colors.purple, // 背景色
         centerTitle: true, // タイトルを中央揃え
       ),
-      body: FutureBuilder<List<AlarmSettings>>(
-        future: _alarms,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('エラー: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('アラームがありません'));
-          }
-
-          final alarms = snapshot.data!;
-
-          return ListView.separated(
-            itemCount: alarms.length,
-            itemBuilder: (context, index) {
-              final alarm = alarms[index];
-              return ListTile(
-                title: Text('${alarm.dateTime.hour}:${alarm.dateTime.minute}'),
-                subtitle: Text('${alarm.dateTime.month}/${alarm.dateTime.day}'),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
-                  onPressed: () => _deleteAlarm(alarm.id),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [              Color(0xFFebc0fd), // ピンク系
+              Color(0xFFd9ded8), ], // ピンク系グラデーション
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: FutureBuilder<List<AlarmSettings>>(
+          future: _alarms,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Text(
+                  'エラー: ${snapshot.error}',
+                  style: TextStyle(color: Colors.white, fontSize: 18),
                 ),
               );
-            },
-            separatorBuilder: (context, index) => const Divider(),
-          );
-        },
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(
+                child: Text(
+                  'アラームがありません',
+                  style: TextStyle(color: Colors.white, fontSize: 30),
+                ),
+              );
+            }
+
+            final alarms = snapshot.data!;
+
+            return ListView.separated(
+              itemCount: alarms.length,
+              itemBuilder: (context, index) {
+                final alarm = alarms[index];
+                return ListTile(
+                  title: Text(
+                    '${alarm.dateTime.hour}:${alarm.dateTime.minute.toString().padLeft(2, '0')}',
+                    style: TextStyle(color: Colors.white, fontSize: 40),
+                  ),
+                  subtitle: Text(
+                    '${alarm.dateTime.month}/${alarm.dateTime.day}',
+                    style: TextStyle(color: Colors.white70, fontSize: 18),
+                  ),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.red),
+                    onPressed: () => _deleteAlarm(alarm.id),
+                  ),
+                );
+              },
+              separatorBuilder: (context, index) => const Divider(color: Colors.white54),
+            );
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
@@ -119,7 +145,7 @@ class _ClockHomePageState extends State<ClockHomePage> {
           );
           _fetchAlarms(); // 戻ってきた後に更新
         },
-        //onPressed: _addTestAlarm,//デバッグ用。＋ボタンを押したとき、id1問題集id1のアラームを1分後に作成.
+        backgroundColor: Colors.purple,
       ),
     );
   }
